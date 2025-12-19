@@ -1,4 +1,4 @@
-# Stage 1: Build the frontend using Node.js
+# Stage 1: Build the frontend using Node.js 
 FROM node:23 AS builder
 
 # Accept the API base URL as a build-time argument (used for configuring the frontend)
