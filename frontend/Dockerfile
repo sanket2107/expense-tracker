@@ -20,7 +20,7 @@ COPY . .
 RUN npm run build
 
 
-# Stage 2: Serve the built frontend using Nginx
+# Stage 2: Serve the built frontend using Nginx  
 FROM nginx:alpine
 
 # Expose port 80 for HTTP traffic
