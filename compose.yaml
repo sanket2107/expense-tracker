@@ -1,0 +1,40 @@
+services:
+  lb:
+    image: traefik:v3
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "autoheal=true"
+    command:
+      # Enable Traefik Web UI (Use authentication in production)
+      - "--api.insecure=true"
+
+      # Configure Docker as provider (only use containers with explicit labels)
+      - "--providers.docker=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--providers.docker.allowEmptyServices=true"
+
+      # Enable internal ping endpoint for healthchecks
+      - "--ping=true"
+      - "--ping.entryPoint=web"
+
+      # Define HTTP entrypoint on port 80
+      - "--entrypoints.web.address=:80"
+
+  db:
+    image: postgres:17
+    volumes:
+      - db-vol:/var/lib/postgresql/data:rw
+      - ./db:/docker-entrypoint-initdb.d:ro
+    environment:
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+    restart: unless-stopped
+
+volumes:
+  db-vol:
